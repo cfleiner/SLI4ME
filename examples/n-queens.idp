@@ -1,0 +1,32 @@
+/* ------------------------------------------
+N-queens
+
+In chess, a queen can move as far as she pleases, horizontally, vertically, and diagonally. A chess board has
+n rows and n columns. The standard n × n Queen’s problem asks “how to place n queens on an n × n
+chess board so that none of them can hit any other in one move?”.
+
+Robbe Van den Eede, Apr 23, 2025.
+*/ ------------------------------------------
+
+vocabulary V{
+    type Row <: Int // Type Row subtype of Z
+    type Col <: Int // Type Col subtype of Z
+    queen: Row * Col -> Bool // Positions of queens
+}
+
+theory T:V {
+    !r in Row: ?c in Col: queen(r, c). // Every row has a queen
+    !c in Col: ?r in Row: queen(r, c). // Every column has a queen
+    !r in Row, c1, c2 in Col: queen(r, c1) & queen(r, c2) => c1 = c2. // No horizontal attacks
+    !r1, r2 in Row, c in Col: queen(r1, c) & queen(r2, c) => r1 = r2. // No vertical attacks
+    !r1, r2 in Row, c1, c2 in Col : queen(r1, c1) & queen(r2, c2) & r1 ~= r2 => |r1-r2| ~= |c1-c2|. // No diagonal attacks
+}
+
+structure S:V{
+    Row := {1..8}.
+    Col := {1..8}.
+}
+
+procedure main() {
+    pretty_print(model_expand(T, S, max=100))
+}

@@ -1,0 +1,36 @@
+/* ------------------------------------------
+4-Colouring of a graph
+
+Given a graph, assign a colour to each node, such that neighbouring nodes are assigned different
+colors. By the four colour theorem, it suffices to consider four colours.
+
+Robbe Van den Eede, Apr 23, 2025.
+*/ ------------------------------------------
+
+vocabulary V{
+    type Colour
+    type Node                // a country on the map
+    edge: Node * Node -> Bool    // Country X and Y are neighbors
+    colouring: Node -> Colour // The color of X is Y
+}
+
+theory T:V{
+    ! n, m in Node: edge(n, m) => colouring(n) ~= colouring(m).  
+}
+
+structure S:V{
+    Colour := {blue, red, green, yellow}.
+    Node := {A, B, C, D, E, F, G, H, J}.
+    edge := {(A, B), (A, F), (A, E), (A, D),
+    	     (B, F), (B, G), (B, C),
+             (C, G), (C, H), (C, D),
+             (D, E), (D, H),
+             (E, H), (E, J), (E, F),
+             (F, G), (F, J),
+             (G, H), (G, J),
+             (H, J)}.
+}
+
+procedure main() {
+    pretty_print(model_expand(T, S))
+}

@@ -1,0 +1,24 @@
+/* ------------------------------------------
+Base example
+
+Demonstrating the structure of a FO(·) knowledge base with the four blocks vocabulary, theory, structure, and procedure.
+
+ Lucas Van Laer, Jun 11, 2026.
+*/ ------------------------------------------
+
+vocabulary V {
+    type A := {a,b,c}
+    p, q: A -> Bool
+}
+
+theory T:V {
+    !x in A: p(x) => q(x).
+}
+
+structure S:V {
+    p :> {a}.
+}
+
+procedure main() {
+    pretty_print(model_expand(T,S))
+}

@@ -1,0 +1,57 @@
+/* ------------------------------------------
+Travelling salesman problem
+
+Given is directed graph in which the vertices represent cities and the edges roads. (Since the graph is
+directed, roads might by one-way.) A travelling salesman plans a tour to visit every cities exactly once, and
+want to minimize its total travelled distance.
+Fill in the template to specify a correct tour. This tour is modelled by means of a constant start ∈
+V ertex representing the starting city, and a function next : Vertex → Vertex representing the order of
+cities visited in the tour. Make sure to return to the starting city after visiting the final city.
+You do not have to take into account (minimization of) distances yet. This will be considered in the next
+exercise session.
+
+Robbe Van den Eede, Apr 23, 2025.
+*/ ------------------------------------------
+
+
+vocabulary V{
+    type Vertex
+    edge: Vertex * Vertex -> Bool // there is an edge from X to Y
+    start: () ->  Vertex         // the starting point is X
+    next: Vertex -> Vertex     // The vertex following X is Y
+    reachable: Vertex -> Bool   // X is reachable
+}
+
+theory T:V{
+    ! v in Vertex: edge(v, next(v)). // use roads
+    ! v in Vertex: reachable(v). // visit every city
+    ? v in Vertex: next(v) = start(). // return to start city
+    
+    // Definition reachable
+    {
+        reachable(start()).
+        ! v in Vertex: reachable(next(v)) <- reachable(v).
+    }
+}
+
+structure S:V {
+    Vertex := {A, B, C, D, E, F}.
+    start  := E.
+    edge := {
+          (A, B),
+          (A, C),
+          (B, C),
+          (C, F),
+          (D, E),
+          (C, E),
+          (E, D),
+          (D, F),
+          (F, A),
+          (B, D),
+          (F, B)
+    }.
+}
+
+procedure main() {
+    pretty_print(model_expand(T, S))
+}
