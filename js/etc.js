@@ -93,7 +93,7 @@ export async function populateFileList(
         e.preventDefault();
 
         // Use raw download URL from GitHub API
-        onFileClick(file.download_url, file.name);
+        onFileClick(file.download_url, "");
       });
     }
 
