@@ -15,47 +15,93 @@ export function loading(element, value) {
 }
 
 
-export async function populateFileList(ulElement, basePath, extension, onFileClick) {
-    const res = await fetch(basePath);
-    const html = await res.text();
+// export async function populateFileList(ulElement, basePath, extension, onFileClick) {
+//     const res = await fetch(basePath);
+//     const html = await res.text();
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+//     const parser = new DOMParser();
+//     const doc = parser.parseFromString(html, "text/html");
 
-    const links = doc.querySelectorAll("a");
-    const hasHandler = typeof onFileClick === "function";
+//     const links = doc.querySelectorAll("a");
+//     const hasHandler = typeof onFileClick === "function";
 
 
-    ulElement.innerHTML = "";
+//     ulElement.innerHTML = "";
 
-    links.forEach(link => {
-        const href = link.getAttribute("href");
-        if (!href || !href.endsWith(extension)) return;
+//     links.forEach(link => {
+//         const href = link.getAttribute("href");
+//         if (!href || !href.endsWith(extension)) return;
 
-        const file = href.split("/").pop();
-        if (!file) return;
+//         const file = href.split("/").pop();
+//         if (!file) return;
 
-        const name = file
-            .replace(/\.[^/.]+$/, "")
-            .replace(/_/g, " ");
+//         const name = file
+//             .replace(/\.[^/.]+$/, "")
+//             .replace(/_/g, " ");
 
-        const li = document.createElement("li");
-        const a = document.createElement("a");
+//         const li = document.createElement("li");
+//         const a = document.createElement("a");
 
-        a.href = "#";
-        a.textContent = name;
+//         a.href = "#";
+//         a.textContent = name;
 
-        if (hasHandler) {
-            a.addEventListener("click", (e) => {
-                e.preventDefault();
-                onFileClick(basePath, file);
-            });
-        }
+//         if (hasHandler) {
+//             a.addEventListener("click", (e) => {
+//                 e.preventDefault();
+//                 onFileClick(basePath, file);
+//             });
+//         }
 
-        li.appendChild(a);
-        ulElement.appendChild(li);
-    });
+//         li.appendChild(a);
+//         ulElement.appendChild(li);
+//     });
+// }
+
+export async function populateFileList(
+  ulElement,
+  apiUrl,
+  extension,
+  onFileClick
+) {
+  const res = await fetch(apiUrl);
+  if (!res.ok) {
+    console.error("Failed to fetch file list:", res.status);
+    return;
+  }
+
+  const files = await res.json();
+  const hasHandler = typeof onFileClick === "function";
+
+  ulElement.innerHTML = "";
+
+  files.forEach(file => {
+    // Only include files (not directories) with the right extension
+    if (file.type !== "file" || !file.name.endsWith(extension)) return;
+
+    const name = file.name
+      .replace(/\.[^/.]+$/, "")
+      .replace(/_/g, " ");
+
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+
+    a.href = "#";
+    a.textContent = name;
+
+    if (hasHandler) {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Use raw download URL from GitHub API
+        onFileClick(file.download_url, file.name);
+      });
+    }
+
+    li.appendChild(a);
+    ulElement.appendChild(li);
+  });
 }
+
 
 
 export async function readIdpFile(basePath, file) {

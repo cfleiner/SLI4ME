@@ -17,7 +17,7 @@ async function init() {
   const inputArea = document.getElementById("input-area");
   const themeSelect = document.querySelector('#theme-select');
   
-  const example = await readIdpFile("./tree/main/examples/", "base.idp");
+  const example = await readIdpFile("https://raw.githubusercontent.com/cfleiner/SLI4ME/refs/heads/main/examples/", "base.idp");
   inputArea.value = example.code;
   updateHighlighting(inputArea, themeSelect);
 
